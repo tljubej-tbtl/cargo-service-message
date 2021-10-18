@@ -178,17 +178,6 @@ fn run_cargo(args: &[String]) -> Result<i32, Box<dyn Error>> {
             print!("{:?}", line);
         }
     }
-    //TODO only if file exists?
-    println!(
-        "##{}[publishArtifacts '{}']",
-        brand,
-        std::env::current_dir()
-            .unwrap()
-            .join("cargo-timing.html")
-            .into_os_string()
-            .into_string()
-            .unwrap()
-    );
 
     let result = Ok(child.wait()?).map(|exit_status| {
         if let Some(exit_code) = exit_status.code() {
