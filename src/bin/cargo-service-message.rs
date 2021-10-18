@@ -115,8 +115,8 @@ fn run_cargo(args: &[String]) -> Result<i32, Box<dyn Error>> {
                 "json"
             }
         )); //TODO: this needs to be before --
-        cmd.arg("-Ztimings=json,html,info");
-        //TODO: this creates cargo-timings.html and friends in the root - we should move those to the target dir.
+            // cmd.arg("-Ztimings=json,html,info"); Timings flag doesn't work on stable rust
+            //TODO: this creates cargo-timings.html and friends in the root - we should move those to the target dir.
     }
 
     let mode = if contains("--release", args) {
@@ -135,18 +135,6 @@ fn run_cargo(args: &[String]) -> Result<i32, Box<dyn Error>> {
         }
         cmd.arg("--format");
         cmd.arg("json");
-    }
-
-    if coverage && (cargo_cmd == "test" || cargo_cmd == "build") {
-        // TODO: maybe support -Zexperimental-coverage
-
-        let flags = env::var("RUSTFLAGS").unwrap_or_else(|_| "".to_string());
-        // TODO: dedup flags if already set
-
-        //TODO: can't use -Zpanic_abort_tests -Cpanic=abort as not compatible with proc macros!!!
-        cmd.env("RUSTFLAGS", format!("{} -Zinstrument-coverage -Zprofile -Ccodegen-units=1 -Copt-level=0 -Clink-dead-code -Coverflow-checks=off ", flags));
-        cmd.env("CARGO_INCREMENTAL", "0");
-        cmd.env("RUSTDOCFLAGS", "-Cpanic=abort");
     }
 
     println!("spawning: {:?}", &cmd);
